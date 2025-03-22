@@ -8,6 +8,7 @@ export class ArticlesResolver {
 
   @Query(() => [Article], { name: 'articles' })
   async findAll(): Promise<Article[]> {
+    console.log('Finding all Articles');
     return this.articlesService.findAll();
   }
 
