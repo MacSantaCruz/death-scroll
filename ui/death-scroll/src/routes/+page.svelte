@@ -1,9 +1,26 @@
 <script lang="ts">
   import Card from '$lib/components/Card.svelte';
   import { mockCards } from '$lib/data/cardData';
-  
-  // Use all 12 entries from the mock data file
+  import { getContextClient, gql, queryStore } from '@urql/svelte';
+  // Define your GraphQL query
+const ARTICLES_QUERY = gql`
+  query Articles {
+    articles {
+      content,
+      publish_date,
+      name
+    }
+  }
+`;
+
+  const articles = queryStore({
+        client: getContextClient(),
+        query: ARTICLES_QUERY
+      });
+
   const cards = mockCards;
+
+
 </script>
 
 <div class="container mx-auto px-4 py-8">
@@ -19,7 +36,14 @@
       </div>
     {/each}
   </div>
-  
+  <div>
+      {#each $articles?.data?.articles as article}
+      <div class="break-inside-avoid mb-6 group transform hover:z-10 transition-all duration-300"> 
+      <p>{article.name}</p>
+
+      </div>
+    {/each}
+  </div>
   <!-- Optional pagination or load more button -->
   <div class="mt-8 text-center">
     <button class="px-6 py-3 bg-red-500 hover:bg-red-600 text-white rounded-full font-medium shadow-md hover:shadow-lg transition-all">
