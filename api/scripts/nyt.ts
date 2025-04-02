@@ -1,5 +1,5 @@
 import { config } from 'dotenv';
-import { Article } from 'scripts/article';
+import { Article } from 'types/article';
 
 config();
 

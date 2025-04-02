@@ -1,6 +1,5 @@
-// Format we will use to store articles into the database
 export type Article = {
-  /** Source / Publisher of an article */
+  /** Source/Publisher of an article */
   source: {
     id: string;
     name: string;
