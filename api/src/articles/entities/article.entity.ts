@@ -6,25 +6,53 @@ import {
   CreateDateColumn,
 } from 'typeorm';
 import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { Article as ArticleType } from 'types/article';
 
 @ObjectType()
 @Entity('articles')
-export class Article {
+export class Article implements ArticleType {
   @Field(() => ID)
   @ObjectIdColumn()
   id: ObjectId;
 
-  @Field()
+  @Field(() => String)
   @Column({ nullable: false })
-  name: string;
+  source: {
+    id: string;
+    name: string;
+  };
 
-  @Field()
-  @Column({ nullable: false })
-  content: string;
+  @Field(() => String, { nullable: true })
+  @Column({ nullable: true })
+  author: string | null;
 
-  @Field(() => Date)
+  @Field(() => String)
   @Column({ nullable: false })
-  publish_date: Date;
+  title: string;
+
+  @Field(() => String, { nullable: true })
+  @Column({ nullable: true })
+  description: string | null;
+
+  @Field(() => String)
+  @Column({ nullable: false })
+  url: string;
+
+  @Field(() => String, { nullable: true })
+  @Column({ nullable: true })
+  imageURL: string | null;
+
+  @Field(() => Date, { nullable: true })
+  @Column({ nullable: true })
+  publish_date: Date | null;
+
+  @Field(() => String, { nullable: true })
+  @Column({ nullable: true })
+  content: string | null;
+
+  @Field(() => [String])
+  @Column('simple-array')
+  tags: string[];
 
   @Field(() => Date)
   @CreateDateColumn()

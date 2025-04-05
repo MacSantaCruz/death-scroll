@@ -4,9 +4,15 @@
 
 type Article {
   id: ID!
-  name: String!
-  content: String!
-  publish_date: DateTime!
+  source: String!
+  author: String
+  title: String!
+  description: String
+  url: String!
+  imageURL: String
+  publish_date: DateTime
+  content: String
+  tags: [String!]!
   createdAt: DateTime!
 }
 

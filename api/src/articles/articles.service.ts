@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MongoRepository } from 'typeorm';
-import { ObjectId } from 'mongodb';
 import { Article } from './entities/article.entity';
 
 @Injectable()
@@ -12,9 +11,15 @@ export class ArticlesService {
   ) {}
 
   async create(createArticleDto: {
-    name: string;
-    content: string;
-    publish_date: Date;
+    source: { id: string; name: string };
+    author: string | null;
+    title: string;
+    description: string | null;
+    url: string;
+    imageURL: string | null;
+    publish_date: Date | null;
+    content: string | null;
+    tags: string[];
   }): Promise<Article> {
     const article = this.articleRepository.create(createArticleDto);
     return this.articleRepository.save(article);

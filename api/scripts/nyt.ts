@@ -1,3 +1,10 @@
+/**
+ * This script fetches articles from the New York Times Archive API for a specified year and month.
+ *
+ * Usage:
+ *   node nyt.js [year] [month (1-12)]
+ */
+
 import { config } from 'dotenv';
 import { Article } from 'types/article';
 
@@ -74,10 +81,12 @@ const ConvertToArticles = (data: ArchiveResponse): Article[] => {
       url: doc.web_url || '',
       // TODO: Figure out how to grab newspaper scans shown on web articles (Not given by API?)
       imageURL: null,
-      publishDate: doc.pub_date || null,
+      publish_date:
+        doc.pub_date && !isNaN(Date.parse(doc.pub_date))
+          ? new Date(doc.pub_date)
+          : null,
       content: doc.abstract || null,
       tags: doc.keywords.map((keyword) => keyword.value),
-      fetchDate: new Date().toISOString(),
     };
     articles.push(article);
   });
@@ -104,3 +113,37 @@ export const GetArchive = async (year: number, month: number) => {
   const articles = ConvertToArticles(data);
   return articles;
 };
+
+if (require.main === module) {
+  const args = process.argv.slice(2);
+  if (args.length !== 2) {
+    console.error('[ERROR]: Please provide arguments: [year] [month 1-12].');
+    process.exit(1);
+  }
+  const year = parseInt(args[0], 10);
+  const month = parseInt(args[1], 10);
+
+  if (isNaN(year) || isNaN(month) || month < 1 || month > 12) {
+    console.error('[ERROR]: Invalid year or month provided.');
+    process.exit(1);
+  }
+  GetArchive(year, month).then((articles) => {
+    fetch(`http://localhost:3000/articles`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(articles),
+    })
+      .then((response) => {
+        console.log( 'Response status:', response.status);
+        return response.json();
+      })
+      .then((data) => {
+        console.log(data.message); // Prints: Articles stored successfully.
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+  });
+}
